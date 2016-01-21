@@ -1,7 +1,7 @@
 require 'github_api'
 require 'awesome_print'
 
-GITHUB_TOKEN = "763a6a109a47bedb1045035964fbfae709998e6e"
+GITHUB_TOKEN = "dsfukhdsuafhdiuh"
 SLACK_TOKEN = "kajshfdjkshf"
 
 github = Github.new oauth_token: GITHUB_TOKEN
