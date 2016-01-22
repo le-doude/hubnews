@@ -12,7 +12,7 @@ raise "No SLACK_TOKEN sysenv found" unless SLACK_TOKEN
 
 LGTM_NEEDED = 2
 
-channel = '#bot-testing'
+channel = '#waza-dev'
 
 github = Octokit::Client.new access_token: GITHUB_TOKEN
 slack = Slack::Client.new token: SLACK_TOKEN
@@ -35,11 +35,11 @@ report = open_pull_request.map do |number, pr|
 end.to_h
 
 
-full_report="*PR report* on _#{repository}_ at #{DateTime.now.to_s}\n"
+full_report="on _#{repository}_ at #{DateTime.now.to_s}\n"
 open_pull_request.each do |number, pr|
   title = pr[:title]
   approvers = nil
-  status = if (title.downcase =~ /deliver|fix/).nil?
+  status = if (title.downcase =~ /deliver/).nil?
              "Work in progress. :derp:"
            else
              approvers = report[number].select { |k, v| v }.keys
