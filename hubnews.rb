@@ -12,8 +12,8 @@ raise "No SLACK_TOKEN sysenv found" unless SLACK_TOKEN
 
 LGTM_NEEDED = 2
 
-channel = '#bot-testing'
-# channel = '#waza-dev'
+# channel = '#bot-testing'
+channel = '#waza-dev'
 
 github = Octokit::Client.new access_token: GITHUB_TOKEN
 slack = Slack::Client.new token: SLACK_TOKEN
@@ -38,7 +38,7 @@ report = open_pull_request.map do |number, pr|
 end.to_h
 
 
-full_report="on _#{repository}_ at #{DateTime.now.to_s}\n"
+full_report=""
 wip=[]
 
 open_pull_request.each do |number, pr|
@@ -67,4 +67,4 @@ end
 wip_s = wip.map { |pr| "<#{pr._links.html.href}|#{pr.number}> by #{pr.user.login}" }.join(", ")
 full_report += "\n\n currently WIP: #{wip_s}"
 
-slack.chat_postMessage(channel: channel, text: full_report, link_names: 1, username: "Github PR Report #{repository}")
+slack.chat_postMessage(channel: channel, text: full_report, link_names: 1, username: "Github PR Report - repo #{repository}")
