@@ -1,23 +1,28 @@
-require 'github_api'
+require 'octokit'
 require 'awesome_print'
+require 'byebug'
 
 GITHUB_TOKEN = ENV["GITHUB_TOKEN"]
 SLACK_TOKEN = ENV["SLACK_TOKEN"]
 
-github = Github.new oauth_token: GITHUB_TOKEN
+raise "No GITHUB_TOKEN sysenv found" unless GITHUB_TOKEN
+raise "No SLACK_TOKEN sysenv found" unless SLACK_TOKEN
 
-pr_to_lgtm = {}
 
-l = github.pull_requests.list('en-japan', 'waza', state: "open")
-l.each do |pr|
-  lgtms = 0
-  if pr[:state] == "open"
-    comments = github.pull_requests.comments.list 'en-japan', 'waza', number: pr[:number]
-    comments.each do |comment|
-      lgtms = lgtms + 1 if comment[:body].include?("LGTM")
-    end
-  end
-  pr_to_lgtm[pr[:number]] = lgtms
-end
+repository = 'en-japan/waza'
 
-ap pr_to_lgtm
+github = Octokit::Client.new access_token: GITHUB_TOKEN
+
+open_pull_request = github.pull_requests(repository, state: 'open').map {|pr| pr[:number]}
+
+report = open_pull_request.map do |number|
+
+  lgtmh = github.issue_comments(repository, number).map do |comment|
+    [comment[:user][:login], comment[:body].include?('LGTM')]
+  end.to_h
+
+  [number, lgtmh]
+
+end.to_h
+
+ap report
