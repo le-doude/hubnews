@@ -41,7 +41,7 @@ wip=[]
 
 open_pull_request.each do |number, pr|
   title = pr[:title]
-  if title.downcase =~ /wip/ || (title.downcase =~ /deliver/).nil?
+  if title.downcase =~ /wip/ || (title.downcase =~ /deliver/).nil? #if is work in progress
     wip << pr
   else
     approvers = report[number].select { |k, v| v }.keys
@@ -62,6 +62,7 @@ open_pull_request.each do |number, pr|
     full_report += ("\n" + message) unless message.empty?
   end
 end
+
 wip_s = wip.map { |pr| "<#{pr._links.self.href}|#{pr.number}> by #{pr.user.login}" }.join(", ")
 full_report += "\n\n currently WIP: #{wip_s}"
 
