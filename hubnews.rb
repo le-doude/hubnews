@@ -45,12 +45,11 @@ open_pull_request.each do |number, pr|
     wip << pr
   else
     approvers = report[number].select { |k, v| v }.keys
-    status =
-        if approvers.size < LGTM_NEEDED
-          "Awaiting review. :zzz: "
-        else
-          "Ready to merge. :lgtm:"
-        end
+    status = if approvers.size < LGTM_NEEDED
+               "Awaiting review. :zzz: "
+             else
+               "Ready to merge. :lgtm:"
+             end
 
 
     message = "<#{pr._links.self.href}|#{title}> by #{commiters[pr.user.login]}\n"\
@@ -63,7 +62,7 @@ open_pull_request.each do |number, pr|
     full_report += ("\n" + message) unless message.empty?
   end
 end
-wip_s = wip.map {|pr| "<#{pr._links.self.href}|#{pr.number}> by #{pr.user.login}" }.join(", ")
+wip_s = wip.map { |pr| "<#{pr._links.self.href}|#{pr.number}> by #{pr.user.login}" }.join(", ")
 full_report += "\n\n currently WIP: #{wip_s}"
 
 slack.chat_postMessage(channel: channel, text: full_report, link_names: 1, username: "Github PR Report #{repository}")
