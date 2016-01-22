@@ -27,9 +27,11 @@ open_pull_request = github.pull_requests(repository, state: 'open').map { |pr| [
 report = open_pull_request.map do |number, pr|
   number = pr[:number]
 
-  lgtmh = github.issue_comments(repository, number).map do |comment|
-    [comment[:user][:login], comment[:body].include?('LGTM')]
-  end.to_h
+  comments = github.issue_comments(repository, number)
+  lgtmh = Hash.new {|hsh, key| hsh[key] = false }
+  comments.each do |comment|
+    lgtmh[comment.user.login] ||= comment[:body].include?('LGTM')
+  end
 
   [number, lgtmh]
 
@@ -41,7 +43,7 @@ wip=[]
 
 open_pull_request.each do |number, pr|
   title = pr[:title]
-  if title.downcase =~ /wip/ || (title.downcase =~ /deliver/).nil? #if is work in progress
+  if title.downcase =~ /wip/ || (title.downcase =~ /deliver|fix/).nil? #if is work in progress
     wip << pr
   else
     approvers = report[number].select { |k, v| v }.keys
@@ -51,8 +53,7 @@ open_pull_request.each do |number, pr|
                "Ready to merge. :lgtm:"
              end
 
-
-    message = "<#{pr._links.self.href}|#{title}> by #{commiters[pr.user.login]}\n"\
+    message = "<#{pr._links.html.href}|#{title}> by #{commiters[pr.user.login]}\n"\
             "> status: *#{status}*\n"
     if approvers.nil? || approvers.empty? || approvers.size < 2
       lazyguys = commiters.select { |k, v| !report[number][k] && k != pr.user.login }
@@ -63,7 +64,7 @@ open_pull_request.each do |number, pr|
   end
 end
 
-wip_s = wip.map { |pr| "<#{pr._links.self.href}|#{pr.number}> by #{pr.user.login}" }.join(", ")
+wip_s = wip.map { |pr| "<#{pr._links.html.href}|#{pr.number}> by #{pr.user.login}" }.join(", ")
 full_report += "\n\n currently WIP: #{wip_s}"
 
 slack.chat_postMessage(channel: channel, text: full_report, link_names: 1, username: "Github PR Report #{repository}")
