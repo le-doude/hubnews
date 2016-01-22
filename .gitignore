@@ -120,3 +120,7 @@ build/
 .rvmrc
 
 # Created by .ignore support plugin (hsz.mobi)
+
+.byebug_history
+
+bin/
