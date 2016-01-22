@@ -1,12 +1,11 @@
 slack:
-  token: <%= ENV["SLACK_TOKEN"]>
 
 github:
-  token: <%= ENV["GITHUB_TOKEN"]>
   repos:
     waza:
       id: "en-japan/waza"
       channel: "#waza-dev"
+      approval: quorum
       commiters:
         mediavrog: maik.vlcek
         le-doude: edouard.pelosi
