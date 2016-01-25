@@ -106,7 +106,7 @@ class SlackReportJob
         end
       end
 
-      reports << {
+      reports.unshift({
           :title => "Work in progress",
           :color => '#ac1b82',
           :thumb_url => "https://slack-files.com/T04UCLB3U-F0K96M68L-a18c837f49",
@@ -118,7 +118,7 @@ class SlackReportJob
                 end.join(', ')
             }
           end
-      }
+      })
 
       reports
 
