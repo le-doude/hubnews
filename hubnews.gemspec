@@ -35,4 +35,5 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'octokit'
   spec.add_runtime_dependency 'slack_api'
+  spec.add_runtime_dependency 'json_builder'
 end

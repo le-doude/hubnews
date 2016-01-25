@@ -6,6 +6,7 @@ require 'byebug'
 
 config = YAML::load_file File.join(File.dirname(File.expand_path(__FILE__)), 'config.yml')
 
+config = config['waza']
 
 slack_conf = config['slack']
 SLACK_TOKEN = if slack_conf
@@ -21,7 +22,7 @@ repos = github_config['repos'] || github_config['repositories']
 
 repos.each do |repo_name, repo_conf|
 
-  channel = repo_conf['channel']
+  channel = slack_conf['channel']
   repository = repo_conf["id"]
   commiters = repo_conf["commiters"]
   approval = if repo_conf['approval'] == "quorum"

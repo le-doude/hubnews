@@ -1,13 +1,15 @@
-slack:
-
-github:
-  repos:
-    waza:
-      id: "en-japan/waza"
-      channel: "#waza-dev"
-      approval: quorum
-      commiters:
-        mediavrog: maik.vlcek
-        le-doude: edouard.pelosi
-        pcboy: david.hagege
-        shawila: salah.hawila
+waza:
+  slack:
+    channel: "#waza-dev"
+    token: <%= ENV['SLACK_TOKEN'] %>
+  github:
+    token: <%= ENV['GITHUB_TOKEN'] %>
+    repos:
+      waza_0:
+        id: "en-japan/waza"
+        approval: quorum
+        commiters:
+          mediavrog: maik.vlcek
+          le-doude: edouard.pelosi
+          pcboy: david.hagege
+          shawila: salah.hawila
