@@ -2,12 +2,19 @@ PATH
   remote: .
   specs:
     hubnews (0.1.0)
+      json_builder
       octokit
       slack_api
 
 GEM
   remote: https://rubygems.org/
   specs:
+    activesupport (4.2.5)
+      i18n (~> 0.7)
+      json (~> 1.7, >= 1.7.7)
+      minitest (~> 5.1)
+      thread_safe (~> 0.3, >= 0.3.4)
+      tzinfo (~> 1.1)
     addressable (2.3.8)
     awesome_print (1.6.1)
     byebug (8.2.1)
@@ -18,8 +25,13 @@ GEM
       multipart-post (>= 1.2, < 3)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
+    i18n (0.7.0)
     json (1.8.3)
+    json_builder (3.1.7)
+      activesupport (>= 2.0.0)
+      json
     mime-types (2.99)
+    minitest (5.8.4)
     multipart-post (2.0.0)
     netrc (0.11.0)
     octokit (4.2.0)
@@ -48,6 +60,9 @@ GEM
     slack_api (0.0.2)
       json (~> 1.8.1)
       rest-client
+    thread_safe (0.3.5)
+    tzinfo (1.2.2)
+      thread_safe (~> 0.1)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.1)
