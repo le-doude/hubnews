@@ -54,7 +54,7 @@ class SlackReportJob
       lgtmh
     end
 
-    def is_pr_lgtm?(pr)
+    def is_pr_wip?(pr)
       content = pr.title + pr.body
       content = content.downcase
       content =~ /wip/ || (content =~ /deliver|fix/).nil?
@@ -65,7 +65,7 @@ class SlackReportJob
       reports = []
 
       pull_requests.each do |number, pr|
-        if is_pr_lgtm?(pr)
+        if is_pr_wip?(pr)
           wip << pr
         else
           title = pr.title

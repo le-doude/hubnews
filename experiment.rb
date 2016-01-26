@@ -11,4 +11,6 @@ config = config['waza']
 
 job = SlackReportJob.new('waza', config)
 
+byebug
+
 job.send_report
