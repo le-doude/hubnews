@@ -46,7 +46,7 @@ class SlackReportJob
       @pr_data ||= @github_client.pull_requests(id, state: 'open').map { |d| [d['number'], d] }
     end
 
-    def lgtm_report(pr_number)
+    def commenters_report(pr_number)
       lgtmh = Hash.new { |hsh, key| hsh[key] = false }
       @github_client.issue_comments(id, pr_number).each do |comment|
         lgtmh[comment.user.login] ||= comment[:body].include?('LGTM')
@@ -54,37 +54,34 @@ class SlackReportJob
       lgtmh
     end
 
+    def is_pr_lgtm?(pr)
+      content = pr.title + pr.body
+      content = content.downcase
+      content =~ /wip/ || (content =~ /deliver|fix/).nil?
+    end
+
     def pull_request_status_reports
       wip = []
       reports = []
 
       pull_requests.each do |number, pr|
-        title = pr[:title]
-        if title.downcase =~ /wip/ || (title.downcase =~ /deliver|fix/).nil?
+        if is_pr_lgtm?(pr)
           wip << pr
         else
+          title = pr.title
           author = pr[:user]
           page = pr[:_links][:html][:href]
 
-          lgtms = lgtm_report(number)
-          approvers = lgtms.select { |k, v| v }
+          approvers = commenters_report(number).select { |k, has_lgtmed| has_lgtmed }
 
           waiting_on = commiters.select { |k, v| k != author[:login] && !approvers.include?(k) }
           color, fields = if approvers.size < approval
                             ['warning', [
-                                {
-                                    :title => 'Status: Pending review from',
-                                    :value => waiting_on.values.map { |slack_name| "@" + slack_name }.join(", "),
-                                    :short => false
-                                }
+                                {:title => 'Status: Pending review from',
+                                 :value => waiting_on.values.map { |slack_name| "@" + slack_name }.join(", ")}
                             ]]
                           else
-                            ['good', [
-                                {
-                                    title: "Status: Ready to merge",
-                                    short: true
-                                }
-                            ]]
+                            ['good', [{title: "Status: Ready to merge"}]]
                           end
 
           reports << {
@@ -101,18 +98,18 @@ class SlackReportJob
       end
 
       reports.unshift({
-          :title => "Work in progress",
-          :color => '#ac1b82',
-          :thumb_url => "https://slack-files.com/T04UCLB3U-F0K96M68L-a18c837f49",
-          :fields => wip.group_by { |pr| pr.user.login }.map do |user, pr_list|
-            {
-                :title => "#{user} (#{pr_list.size})",
-                :value => pr_list.map do |pr|
-                  " <#{pr._links.html.href}|##{pr.number}>"
-                end.join(', ')
-            }
-          end
-      })
+                          :title => "Work in progress",
+                          :color => '#ac1b82',
+                          :thumb_url => "https://slack-files.com/T04UCLB3U-F0K96M68L-a18c837f49",
+                          :fields => wip.group_by { |pr| pr.user.login }.map do |user, pr_list|
+                            {
+                                :title => "#{user} (#{pr_list.size})",
+                                :value => pr_list.map do |pr|
+                                  " <#{pr._links.html.href}|##{pr.number}>"
+                                end.join(', ')
+                            }
+                          end
+                      })
 
       reports
 
