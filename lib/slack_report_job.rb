@@ -73,12 +73,7 @@ class SlackReportJob
           color, fields = if approvers.size < approval
                             ['warning', [
                                 {
-                                    title: "Status",
-                                    value: "Awaiting reviews.",
-                                    short: true
-                                },
-                                {
-                                    :title => 'Pending review from',
+                                    :title => 'Status: Pending review from',
                                     :value => waiting_on.values.map { |slack_name| "@" + slack_name }.join(", "),
                                     :short => false
                                 }
@@ -86,8 +81,7 @@ class SlackReportJob
                           else
                             ['good', [
                                 {
-                                    title: "Status",
-                                    value: "Ready to merge.",
+                                    title: "Status: Ready to merge",
                                     short: true
                                 }
                             ]]
