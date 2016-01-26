@@ -1,6 +1,6 @@
 waza:
   slack:
-    channel: "#waza-dev"
+    channel: "#bot-testing"
     token: <%= ENV['SLACK_TOKEN'] %>
   github:
     token: <%= ENV['GITHUB_TOKEN'] %>

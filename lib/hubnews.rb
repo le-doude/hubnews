@@ -3,7 +3,6 @@ require "yaml"
 require 'config_helper'
 
 module Hubnews
-  # Your code goes here...
 
   def run(projects= nil, filename = 'config.yml')
     config = ConfigHelper.load_config(filename)
@@ -13,9 +12,10 @@ module Hubnews
     end
 
     jobs = projects_to_run.map do |name, job_conf|
-
+      SlackReportJob.new(name, job_conf)
     end
 
+    jobs.each(&:send_report)
   end
 
 end
