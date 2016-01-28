@@ -68,7 +68,7 @@ DEPENDENCIES
   bundler (~> 1.10)
   byebug
   hubnews!
-  rake (~> 10.0)
+  rake
   rspec
 
 BUNDLED WITH

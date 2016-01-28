@@ -13,3 +13,11 @@ waza:
           le-doude: edouard.pelosi
           pcboy: david.hagege
           shawila: salah.hawila
+      koudoku:
+        id: "en-japan/koudoku"
+        approval: quorum
+        commiters:
+          mediavrog: maik.vlcek
+          le-doude: edouard.pelosi
+          pcboy: david.hagege
+          shawila: salah.hawila
