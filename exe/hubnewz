@@ -1,0 +1,64 @@
+#!/usr/bin/env ruby
+
+require 'trollop'
+require 'fileutils'
+require 'awesome_print'
+require_relative '../lib/hubnews'
+require_relative '../lib/config_helper'
+require_relative '../lib/slack_report_job'
+
+
+def setup_hubnews
+  opts = Trollop::options do
+    opt :file, "Name of the file generated", :short => "-f", :type => :string, :default => "settings.yml"
+  end
+
+
+  filename = opts[:file]
+  Trollop::die :file, "File already exists" if File.exists?(filename)
+  FileUtils.cp('config.yml', filename)
+end
+
+def run_hubnews
+  opts = Trollop::options do
+    opt :file, "Name of the settings file", :short => "-f", :type => :string, :default => "settings.yml"
+    opt :projects, "Projects to run from settings", :type => :strings
+  end
+
+  file = (opts[:file] if File.exist?(opts[:file])) || File.join(Dir.pwd, opts[:file]) if File.exists?(File.join(Dir.pwd, opts[:file]))
+
+  Trollop::die :file, "File not found" unless file
+
+  projects = opts[:projects]
+  temp = ConfigHelper.load_config(opts[:file])
+  config = if projects && projects.any?
+             s = temp.select { |pname, pconf| projects.include?(pname) }
+             Trollop::die(:projects, "Could not find projects configurations for #{projects.join(", ")}") if s.empty?
+             s
+           else
+             temp
+           end
+
+  jobs =config.map do |name, project_conf|
+    SlackReportJob.new(name, project_conf)
+  end
+  jobs.each do |job|
+    p "Running project #{job.name}: Will publish to #{job.channel}"
+    job.send_report
+    p "Done for #{job.name}, check slack."
+  end
+end
+
+COMMANDS = %w(setup run)
+
+general_opts = Trollop::options do
+  banner "Hubnews #{Hubnews::VERSION} - Publish Github PR's statuses from your projects' repositories to Slack."
+  stop_on COMMANDS
+end
+
+case ARGV.shift
+  when "setup"
+    setup_hubnews
+  when "run"
+    run_hubnews
+end

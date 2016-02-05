@@ -1,3 +1,6 @@
+require 'octokit'
+require 'slack'
+
 class SlackReportJob
 
   attr_reader :name, :repositories, :channel
