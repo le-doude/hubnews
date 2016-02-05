@@ -3,9 +3,9 @@
 require 'trollop'
 require 'fileutils'
 require 'awesome_print'
-require_relative '../lib/hubnews'
-require_relative '../lib/config_helper'
-require_relative '../lib/slack_report_job'
+require 'hubnews'
+require 'slack_report_job'
+require 'config_helper'
 
 
 def setup_hubnews

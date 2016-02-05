@@ -1,6 +1,6 @@
-require_relative "hubnews/version"
+require "hubnews/version"
 require "yaml"
-require_relative 'config_helper'
+require 'config_helper'
 
 module Hubnews
 
