@@ -13,7 +13,6 @@ def setup_hubnews
     opt :file, "Name of the file generated", :short => "-f", :type => :string, :default => "settings.yml"
   end
 
-
   filename = opts[:file]
   Trollop::die :file, "File already exists" if File.exists?(filename)
   FileUtils.cp('config.yml', filename)
